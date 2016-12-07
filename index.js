@@ -47,7 +47,8 @@ VogelsCache.prepare = function (schema, config) {
     var rangeKey = sample.table.schema.rangeKey;
 
     var getCacheKey = function (hash, range) {
-        return schema.tableName() + SEP + hash + (typeof range === 'string' ? SEP + range : '')
+        var cacheKey =  schema.tableName() + SEP + hash + (typeof range === 'string' ? SEP + range : '')
+        return cacheKey.toLowerCase();
     };
 
     var getModelCacheKey = function (model) {
@@ -207,8 +208,6 @@ VogelsCache.prepare = function (schema, config) {
 
             originalGet.apply(schema, [hashKey, rangeKey, options, function (err, model) {
 
-                model = CachedSchema._cachify(model); 
-
                 if (cacheOptions.CACHE_RESULT && model) {
                     cacheModel(model, cacheOptions.CACHE_EXPIRE);
                 }
@@ -263,29 +262,6 @@ VogelsCache.prepare = function (schema, config) {
         }]);
 
     };
-
-    /**
-     * Modifies model instance methods to support caching.
-     * 
-     * @author hmachalani (github)
-     */
-    CachedSchema._cachify = function (model) {
-
-        model.prototype.originalUpdate = model.prototype.update;
-        model.prototype.update = function (options, cb) {
-            this.originalUpdate(options, function (err) {
-                if (!err) {
-                    var cacheKey = getModelCacheKey(model);
-                    redis.del(cacheKey);
-                }
-                cb(err);
-            });
-
-        }
-
-        return model;
-
-    }
 
     CachedSchema.update = function (item, options, callback) {
 

@@ -1,7 +1,7 @@
 {
-  "name": "vogels-cache",
-  "version": "1.7.1",
-  "author": "Adriano Cola <adriano@ensemble.com.br>",
+  "name": "vogels-redis",
+  "version": "1.8.2",
+  "author": "Henri Machalani <hmachalani@gmail.com>",
   "description": "Redis backed cache for Vogels or Dynogels(DynamoDB data mapper)",
   "main": "index.js",
   "scripts": {
@@ -35,10 +35,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adrianocola/vogels-cache.git"
+    "url": "git+https://github.com/Hmachalani/vogels-cache"
   },
   "bugs": {
-    "url": "https://github.com/adrianocola/vogels-cache/issues"
+    "url": "https://github.com/Hmachalani/vogels-cache/issues"
   },
-  "homepage": "https://github.com/adrianocola/vogels-cache#readme"
+  "homepage": "https://github.com/Hmachalani/vogels-cache#readme"
 }

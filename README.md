@@ -1,6 +1,8 @@
 # vogels-cache [![Build Status](https://travis-ci.org/adrianocola/vogels-cache.png?branch=master)](https://travis-ci.org/adrianocola/vogels-cache)
 
-Vogels-cache adds a cache layer (backed by [Redis](http://redis.io/)) to your [Vogels](https://github.com/ryanfitz/vogels) or [Dynogels](https://github.com/clarkie/dynogels) models.
+Vogels-redis adds a cache layer (backed by [Redis](http://redis.io/)) to your [Vogels](https://github.com/ryanfitz/vogels) or [Dynogels](https://github.com/clarkie/dynogels) models.
+
+This is a fork of vogels-cache. This fork adds caching and cache invalidation support to Item.prototype.update and other vogels schema instance methods.
 
 ## Installation
 
@@ -110,6 +112,9 @@ CacheableAccount.get('foo',{CACHE_SKIP:true},function(err,item){
 ```
 
 ### Changelog
+* **1.9**
+    * Cache keys are all lower case.
+    * Compatible with [redis-dynamo-sync](https://www.npmjs.com/package/redis-dynamo-sync)
 * **1.7.1**
     * Minimum node version supported is now 4.0.0
 * **1.7**
@@ -117,11 +122,14 @@ CacheableAccount.get('foo',{CACHE_SKIP:true},function(err,item){
 * **1.6**
     * Don't cache updates anymore. And the item will be removed from cache after a successful update.
 
+
+This is a fork of Adriano Cola's "vogels-cache" repo.
+
 ### License
 
 (The MIT License)
 
-Copyright (c) 2016 Adriano Cola
+Copyright (c) 2016 Henri Machalani
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
