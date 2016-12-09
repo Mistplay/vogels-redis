@@ -12,9 +12,11 @@ function JSONfromCache(string) {
 
 function clearCacheOptions(options) {
     //don't mess with dynamo parameters
-    delete options.CACHE_RESULT;
+    delete options.CACHE_GETS;
     delete options.CACHE_SKIP;
     delete options.CACHE_EXPIRE;
+    delete options.CACHE_INSERTS;
+    delete options.UNCACHE_UPDATES;
     return options;
 }
 
@@ -31,9 +33,11 @@ VogelsCache.setRedisClient = function (redis) {
 VogelsCache.prepare = function (schema, config) {
 
     config = _.merge(config || {}, {
-        CACHE_RESULT: true,
+        CACHE_GETS: true,
         CACHE_SKIP: false,
-        CACHE_EXPIRE: undefined
+        CACHE_EXPIRE: undefined,
+        CACHE_INSERTS: true,
+        UNCACHE_UPDATES: true,
     });
 
     var redis = config.redis || this.redis;
@@ -152,9 +156,11 @@ VogelsCache.prepare = function (schema, config) {
 
     var getCacheOptions = function (options) {
         return {
-            CACHE_RESULT: _.isNil(options.CACHE_RESULT) ? config.CACHE_RESULT && !options.AttributesToGet : options.CACHE_RESULT,
+            CACHE_GETS: _.isNil(options.CACHE_GETS) ? config.CACHE_GETS && !options.AttributesToGet : options.CACHE_GETS,
             CACHE_SKIP: _.isNil(options.CACHE_SKIP) ? config.CACHE_SKIP : options.CACHE_SKIP,
-            CACHE_EXPIRE: _.isNil(options.CACHE_EXPIRE) ? config.CACHE_EXPIRE : options.CACHE_EXPIRE
+            CACHE_EXPIRE: _.isNil(options.CACHE_EXPIRE) ? config.CACHE_EXPIRE : options.CACHE_EXPIRE,
+            CACHE_INSERTS: _.isNil(options.CACHE_INSERTS) ? config.CACHE_INSERTS : options.CACHE_INSERTS,
+            UNCACHE_UPDATES: _.isNil(options.UNCACHE_UPDATES) ? config.UNCACHE_UPDATES : options.UNCACHE_UPDATES,
         };
     };
 
@@ -188,6 +194,10 @@ VogelsCache.prepare = function (schema, config) {
 
     CachedSchema.get = function (hashKey, rangeKey, options, callback) {
 
+        if(typeof options === 'undefined' && typeof callback === 'function') {
+            options = {};
+        }
+
         if (_.isPlainObject(rangeKey) && typeof options === 'function' && !callback) {
             callback = options;
             options = rangeKey;
@@ -208,7 +218,7 @@ VogelsCache.prepare = function (schema, config) {
 
             originalGet.apply(schema, [hashKey, rangeKey, options, function (err, model) {
 
-                if (cacheOptions.CACHE_RESULT && model) {
+                if (cacheOptions.CACHE_GETS && model) {
                     cacheModel(model, cacheOptions.CACHE_EXPIRE);
                 }
                 callback(err, model)
@@ -247,7 +257,7 @@ VogelsCache.prepare = function (schema, config) {
 
         originalCreate.apply(schema, [attrs, options, function (err, model) {
 
-            if (!err && cacheOptions.CACHE_RESULT) {
+            if (!err && cacheOptions.CACHE_INSERTS) {
                 if (_.isArray(model)) {
                     async.each(model, function (m, cb) {
                         cacheModel(m, cacheOptions.CACHE_EXPIRE, cb);
@@ -272,6 +282,8 @@ VogelsCache.prepare = function (schema, config) {
 
         callback = callback || _.noop;
         options = options || {};
+        var cacheOptions = getCacheOptions(options);
+        clearCacheOptions(options);
 
         originalUpdate.apply(schema, [item, options, function (err, model) {
 
@@ -281,7 +293,8 @@ VogelsCache.prepare = function (schema, config) {
                 } else {
                     var cacheKey = getCacheKey(item[hashKey]);
                 }
-                redis.del(cacheKey);
+                if(cacheOptions.UNCACHE_UPDATES)
+                    redis.del(cacheKey); 
             }
 
             callback(err, model);
@@ -353,12 +366,12 @@ VogelsCache.prepare = function (schema, config) {
 
             originalGetItems.apply(schema, [fetchItems, options, function (err, models) {
 
-                if (!cacheOptions.CACHE_RESULT && cacheOptions.CACHE_SKIP) {
+                if (!cacheOptions.CACHE_GETS && cacheOptions.CACHE_SKIP) {
                     return callback(err, models);
                 }
 
                 _.each(models, function (model) {
-                    if (cacheOptions.CACHE_RESULT) {
+                    if (cacheOptions.CACHE_GETS) {
                         cacheModel(model, cacheOptions.CACHE_EXPIRE);
                     }
 
