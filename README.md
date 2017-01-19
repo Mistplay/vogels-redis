@@ -112,9 +112,12 @@ CacheableAccount.get('foo',{CACHE_SKIP:true},function(err,item){
 ```
 
 ### Changelog
+
+
+* **1.10**
+    * [BREAKING CHANGE] Configs and option key name "CACHE_RESULT" is now divided into: "CACHE_INSERTS" and "CACHE_GETS".
 * **1.9**
-    * Cache keys are all lower case.
-    * Compatible with [redis-dynamo-sync](https://www.npmjs.com/package/redis-dynamo-sync)
+    * Cache keys are all lower-case. Supports [redis-dynamo-sync](https://www.npmjs.com/package/redis-dynamo-sync)
 * **1.7.1**
     * Minimum node version supported is now 4.0.0
 * **1.7**

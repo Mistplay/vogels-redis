@@ -14,6 +14,7 @@ function clearCacheOptions(options) {
     //don't mess with dynamo parameters
     delete options.CACHE_GETS;
     delete options.CACHE_SKIP;
+    delete options.READ_CACHE_ONLY;
     delete options.CACHE_EXPIRE;
     delete options.CACHE_INSERTS;
     delete options.UNCACHE_UPDATES;
@@ -33,11 +34,12 @@ VogelsCache.setRedisClient = function (redis) {
 VogelsCache.prepare = function (schema, config) {
 
     config = _.merge(config || {}, {
-        CACHE_GETS: true,
-        CACHE_SKIP: false,
-        CACHE_EXPIRE: undefined,
-        CACHE_INSERTS: true,
-        UNCACHE_UPDATES: true,
+        CACHE_GETS: true, // Cache any read from Dynamo 
+        CACHE_SKIP: false, //skips cache and reads immediately from Dynamo
+        READ_CACHE_ONLY: false, //Tries to read from Dynamo if cache miss. 
+        CACHE_EXPIRE: undefined, // Specifies in how much time the cache expires (number in seconds)
+        CACHE_INSERTS: true, // DO we cache inserts to Dynamo?
+        UNCACHE_UPDATES: true, // Do we delete previously cached items on Dynamo update.
     });
 
     var redis = config.redis || this.redis;
@@ -51,7 +53,7 @@ VogelsCache.prepare = function (schema, config) {
     var rangeKey = sample.table.schema.rangeKey;
 
     var getCacheKey = function (hash, range) {
-        var cacheKey =  schema.tableName() + SEP + hash + (typeof range === 'string' ? SEP + range : '')
+        var cacheKey = schema.tableName() + SEP + hash + (typeof range === 'string' ? SEP + range : '')
         return cacheKey.toLowerCase();
     };
 
@@ -158,6 +160,7 @@ VogelsCache.prepare = function (schema, config) {
         return {
             CACHE_GETS: _.isNil(options.CACHE_GETS) ? config.CACHE_GETS && !options.AttributesToGet : options.CACHE_GETS,
             CACHE_SKIP: _.isNil(options.CACHE_SKIP) ? config.CACHE_SKIP : options.CACHE_SKIP,
+            READ_CACHE_ONLY: _.isNil(options.READ_CACHE_ONLY) ? config.READ_CACHE_ONLY : options.READ_CACHE_ONLY,
             CACHE_EXPIRE: _.isNil(options.CACHE_EXPIRE) ? config.CACHE_EXPIRE : options.CACHE_EXPIRE,
             CACHE_INSERTS: _.isNil(options.CACHE_INSERTS) ? config.CACHE_INSERTS : options.CACHE_INSERTS,
             UNCACHE_UPDATES: _.isNil(options.UNCACHE_UPDATES) ? config.UNCACHE_UPDATES : options.UNCACHE_UPDATES,
@@ -194,7 +197,7 @@ VogelsCache.prepare = function (schema, config) {
 
     CachedSchema.get = function (hashKey, rangeKey, options, callback) {
 
-        if(typeof options === 'undefined' && typeof callback === 'function') {
+        if (typeof options === 'undefined' && typeof callback === 'function') {
             options = {};
         }
 
@@ -236,8 +239,11 @@ VogelsCache.prepare = function (schema, config) {
                 return callback(null, item)
             }
 
-            doOriginal();
-
+            if (cacheOptions.READ_CACHE_ONLY) {
+                callback(null, null);
+            } else {
+                doOriginal();
+            }
         });
 
     };
@@ -293,8 +299,8 @@ VogelsCache.prepare = function (schema, config) {
                 } else {
                     var cacheKey = getCacheKey(item[hashKey]);
                 }
-                if(cacheOptions.UNCACHE_UPDATES)
-                    redis.del(cacheKey); 
+                if (cacheOptions.UNCACHE_UPDATES)
+                    redis.del(cacheKey);
             }
 
             callback(err, model);

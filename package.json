@@ -1,26 +1,62 @@
 {
-  "name": "vogels-redis",
-  "version": "1.9.1",
-  "author": "Henri Machalani <hmachalani@gmail.com>",
-  "description": "Redis backed cache for Vogels or Dynogels(DynamoDB data mapper)",
-  "main": "index.js",
-  "scripts": {
-    "test": "mocha"
-  },
-  "keywords": [
-    "redis",
-    "vogels",
-    "dynamoDB",
-    "cache"
+  "_args": [
+    [
+      {
+        "raw": "vogels-redis@*",
+        "scope": null,
+        "escapedName": "vogels-redis",
+        "name": "vogels-redis",
+        "rawSpec": "*",
+        "spec": "*",
+        "type": "range"
+      },
+      "/Users/henrim/Documents/projects/mistplay/coinpwn"
+    ]
   ],
-  "engines": {
-    "node": ">=0.4.0"
+  "_from": "vogels-redis@*",
+  "_id": "vogels-redis@2.3.0",
+  "_inCache": true,
+  "_location": "/vogels-redis",
+  "_nodeVersion": "4.4.6",
+  "_npmOperationalInternal": {
+    "host": "packages-18-east.internal.npmjs.com",
+    "tmp": "tmp/vogels-redis-2.3.0.tgz_1481252563392_0.09501632722094655"
   },
-  "license": "MIT",
+  "_npmUser": {
+    "name": "hmachalani",
+    "email": "hmachalani@gmail.com"
+  },
+  "_npmVersion": "2.15.5",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "vogels-redis@*",
+    "scope": null,
+    "escapedName": "vogels-redis",
+    "name": "vogels-redis",
+    "rawSpec": "*",
+    "spec": "*",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/vogels-redis/-/vogels-redis-2.3.0.tgz",
+  "_shasum": "498c98f3675b66026cc57a4aef3ecc2f562078c7",
+  "_shrinkwrap": null,
+  "_spec": "vogels-redis@*",
+  "_where": "/Users/henrim/Documents/projects/mistplay/coinpwn",
+  "author": {
+    "name": "Henri Machalani",
+    "email": "hmachalani@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/Hmachalani/vogels-cache/issues"
+  },
   "dependencies": {
     "async": "^1.5.2",
     "lodash": "^4.14.0"
   },
+  "description": "Redis backed cache for Vogels or Dynogels(DynamoDB data mapper)",
   "devDependencies": {
     "dynogels": "^6.1.1",
     "fakeredis": "^1.0.3",
@@ -33,12 +69,38 @@
   "directories": {
     "test": "test"
   },
+  "dist": {
+    "shasum": "498c98f3675b66026cc57a4aef3ecc2f562078c7",
+    "tarball": "https://registry.npmjs.org/vogels-redis/-/vogels-redis-2.3.0.tgz"
+  },
+  "engines": {
+    "node": ">=0.4.0"
+  },
+  "gitHead": "ad1a3599bd2f9f20f7d18f4cc01d2169611729b4",
+  "homepage": "https://github.com/Hmachalani/vogels-cache#readme",
+  "keywords": [
+    "redis",
+    "vogels",
+    "dynamoDB",
+    "cache"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "hmachalani",
+      "email": "hmachalani@gmail.com"
+    }
+  ],
+  "name": "vogels-redis",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Hmachalani/vogels-cache"
+    "url": "git+https://github.com/Hmachalani/vogels-cache.git"
   },
-  "bugs": {
-    "url": "https://github.com/Hmachalani/vogels-cache/issues"
+  "scripts": {
+    "test": "mocha"
   },
-  "homepage": "https://github.com/Hmachalani/vogels-cache#readme"
+  "version": "2.4.0"
 }
