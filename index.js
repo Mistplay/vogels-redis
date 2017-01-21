@@ -33,14 +33,14 @@ VogelsCache.setRedisClient = function (redis) {
 
 VogelsCache.prepare = function (schema, config) {
 
-    config = _.merge(config || {}, {
+    config = _.merge({
         CACHE_GETS: true, // Cache any read from Dynamo 
         CACHE_SKIP: false, //skips cache and reads immediately from Dynamo
         READ_CACHE_ONLY: false, //Tries to read from Dynamo if cache miss. 
         CACHE_EXPIRE: undefined, // Specifies in how much time the cache expires (number in seconds)
         CACHE_INSERTS: true, // DO we cache inserts to Dynamo?
         UNCACHE_UPDATES: true, // Do we delete previously cached items on Dynamo update.
-    });
+    }, config || {});
 
     var redis = config.redis || this.redis;
 
@@ -228,7 +228,9 @@ VogelsCache.prepare = function (schema, config) {
             }])
         };
 
-        if (cacheOptions.CACHE_SKIP) return doOriginal();
+        if (cacheOptions.CACHE_SKIP) {
+             return doOriginal();
+        }
 
         var cacheKey = getCacheKey(hashKey, rangeKey);
 
@@ -299,8 +301,9 @@ VogelsCache.prepare = function (schema, config) {
                 } else {
                     var cacheKey = getCacheKey(item[hashKey]);
                 }
-                if (cacheOptions.UNCACHE_UPDATES)
+                if (cacheOptions.UNCACHE_UPDATES) {
                     redis.del(cacheKey);
+                } 
             }
 
             callback(err, model);
