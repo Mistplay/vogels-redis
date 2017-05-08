@@ -449,6 +449,8 @@ VogelsCache.prepare = function (schema, config) {
 
     };
 
+    bluebird.promisifyAll(CachedSchema);
+
     return CachedSchema;
 
 };
