@@ -54,6 +54,7 @@
   },
   "dependencies": {
     "async": "^1.5.2",
+    "bluebird": "^3.7.2",
     "lodash": "^4.14.0"
   },
   "description": "Redis backed cache for Vogels or Dynogels(DynamoDB data mapper)",
@@ -93,7 +94,6 @@
     }
   ],
   "name": "vogels-redis",
-  "optionalDependencies": {},
   "readme": "ERROR: No README data found!",
   "repository": {
     "type": "git",
