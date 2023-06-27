@@ -22,14 +22,22 @@ function clearCacheOptions(options) {
     return options;
 }
 
-var VogelsCache = module.exports = function (redis) {
+var VogelsCache = module.exports = function ({main, replica = null}) {
 
-    this.redis = redis;
+    this.redis = main;
+    this.redisRead = main;
+    if(replica) {
+        this.redisRead = replica
+    }
 
 };
 
-VogelsCache.setRedisClient = function (redis) {
-    this.redis = redis;
+VogelsCache.setRedisClient = function ({main, replica = null}) {
+    this.redis = main;
+    this.redisRead = main;
+    if(replica) {
+        this.redisRead = replica
+    }
 };
 
 VogelsCache.prepare = function (schema, config) {
@@ -44,6 +52,7 @@ VogelsCache.prepare = function (schema, config) {
     }, config || {});
 
     var redis = config.redis || this.redis;
+    var redisRead = config.redisRead || this.redisRead;
 
     //Vogels don't expose the schema definition to the Model, so we need to
     // create a sample model to get the schema configuration.
@@ -235,7 +244,7 @@ VogelsCache.prepare = function (schema, config) {
 
         var cacheKey = getCacheKey(hashKey, rangeKey);
 
-        redis.get(cacheKey, function (err, resp) {
+        redisRead.get(cacheKey, function (err, resp) {
             if (resp) {
                 var item = new CachedSchema(JSONfromCache(resp));
                 item.fromCache = new Date();
@@ -414,7 +423,7 @@ VogelsCache.prepare = function (schema, config) {
             positionMap[cacheKey] = indexCount;
             indexCount = indexCount + 1;
 
-            redis.get(cacheKey, function (err, resp) {
+            redisRead.get(cacheKey, function (err, resp) {
                 if (err || !resp) {
                     missing.push(value);
                 } else {
