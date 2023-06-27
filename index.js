@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var bluebird = require('bluebird');
 var async = require('async');
 const SEP = ':';
 
